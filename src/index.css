@@ -2,41 +2,73 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Bank Payment SDK Design System - Professional Fintech Theme
+All colors MUST be HSL for consistent theming across light/dark modes.
 */
 
 @layer base {
   :root {
+    /* Base colors - Clean, professional background */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
+    /* Card surfaces */
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
 
+    /* Popover surfaces */
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Banking blue for trust and reliability */
+    --primary: 211 100% 42%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 211 100% 38%;
 
-    --secondary: 210 40% 96.1%;
+    /* Secondary - Subtle accent for secondary actions */
+    --secondary: 220 14% 96%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
+    /* Muted - For supporting text and disabled states */
+    --muted: 220 14% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - Teal for highlights and success states */
+    --accent: 174 72% 36%;
+    --accent-foreground: 0 0% 100%;
 
+    /* Success - Green for successful transactions */
+    --success: 142 72% 29%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning - Orange for warnings and pending states */
+    --warning: 32 95% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Destructive - Red for errors and failed payments */
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Borders and inputs */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 211 100% 42%;
 
     --radius: 0.5rem;
+
+    /* Gradients - Modern banking aesthetics */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(var(--accent)));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 14% 98%));
+
+    /* Shadows - Elevated card appearance */
+    --shadow-sm: 0 1px 2px 0 hsl(220 13% 91% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(220 13% 91% / 0.1), 0 2px 4px -1px hsl(220 13% 91% / 0.06);
+    --shadow-lg: 0 10px 15px -3px hsl(220 13% 91% / 0.1), 0 4px 6px -2px hsl(220 13% 91% / 0.05);
+
+    /* Animations */
+    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     --sidebar-background: 0 0% 98%;
 
