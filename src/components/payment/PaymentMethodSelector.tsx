@@ -13,13 +13,21 @@ interface PaymentMethodSelectorProps {
 export function PaymentMethodSelector({ className }: PaymentMethodSelectorProps) {
   const { paymentMethods, checkoutState, selectPaymentMethod } = usePaymentSDK();
 
+  console.log('PaymentMethodSelector render:', { 
+    paymentMethods, 
+    checkoutState,
+    paymentMethodsLength: paymentMethods.length 
+  });
+
   const handleMethodSelect = (method: PaymentMethod) => {
+    console.log('Method selected:', method);
     if (method.enabled) {
       selectPaymentMethod(method);
     }
   };
 
   if (checkoutState.loading) {
+    console.log('PaymentMethodSelector showing loading state');
     return (
       <div className={cn("space-y-4", className)}>
         {[...Array(5)].map((_, i) => (
@@ -35,6 +43,18 @@ export function PaymentMethodSelector({ className }: PaymentMethodSelectorProps)
             </CardContent>
           </Card>
         ))}
+      </div>
+    );
+  }
+
+  if (paymentMethods.length === 0 && !checkoutState.loading) {
+    console.log('No payment methods available');
+    return (
+      <div className={cn("space-y-4", className)}>
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">No payment methods available</p>
+          <p className="text-sm text-muted-foreground mt-2">Please try again or contact support</p>
+        </div>
       </div>
     );
   }

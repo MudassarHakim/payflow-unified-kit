@@ -20,12 +20,13 @@ class MockApiService {
   }
 
   async getPaymentMethods(): Promise<PaymentMethod[]> {
+    console.log('mockApiService.getPaymentMethods called');
     await delay(600);
     
-    return [
+    const methods: PaymentMethod[] = [
       {
         id: 'card',
-        type: 'card',
+        type: 'card' as const,
         name: 'Cards',
         icon: '💳',
         enabled: true,
@@ -33,7 +34,7 @@ class MockApiService {
       },
       {
         id: 'upi',
-        type: 'upi',
+        type: 'upi' as const,
         name: 'UPI',
         icon: '📱',
         enabled: true,
@@ -41,7 +42,7 @@ class MockApiService {
       },
       {
         id: 'netbanking',
-        type: 'netbanking',
+        type: 'netbanking' as const,
         name: 'Net Banking',
         icon: '🏦',
         enabled: true,
@@ -49,7 +50,7 @@ class MockApiService {
       },
       {
         id: 'wallet',
-        type: 'wallet',
+        type: 'wallet' as const,
         name: 'Wallets',
         icon: '👛',
         enabled: true,
@@ -57,13 +58,16 @@ class MockApiService {
       },
       {
         id: 'bnpl',
-        type: 'bnpl',
+        type: 'bnpl' as const,
         name: 'Buy Now, Pay Later',
         icon: '⏳',
         enabled: true,
         description: 'EMI & BNPL Options',
       },
     ];
+    
+    console.log('mockApiService.getPaymentMethods returning:', methods);
+    return methods;
   }
 
   async getSavedCards(customerId: string): Promise<SavedCard[]> {

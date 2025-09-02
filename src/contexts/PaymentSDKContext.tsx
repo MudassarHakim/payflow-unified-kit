@@ -128,11 +128,17 @@ export function PaymentSDKProvider({ children }: { children: React.ReactNode }) 
   const [state, dispatch] = useReducer(paymentSDKReducer, initialState);
 
   const initializeSDK = useCallback(async (config: PaymentSDKConfig) => {
+    console.log('initializeSDK called with:', config);
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
       // Simulate API call to initialize session
+      console.log('Calling mockApiService.initializeSession...');
       const sessionData = await mockApiService.initializeSession(config);
+      console.log('Session initialized:', sessionData);
+      
+      console.log('Calling mockApiService.getPaymentMethods...');
       const paymentMethods = await mockApiService.getPaymentMethods();
+      console.log('Payment methods loaded:', paymentMethods);
       
       dispatch({
         type: 'INITIALIZE_SDK',
@@ -143,6 +149,7 @@ export function PaymentSDKProvider({ children }: { children: React.ReactNode }) 
         },
       });
     } catch (error) {
+      console.error('SDK initialization failed:', error);
       dispatch({
         type: 'SET_ERROR',
         payload: {
@@ -158,18 +165,22 @@ export function PaymentSDKProvider({ children }: { children: React.ReactNode }) 
   }, []);
 
   const startCheckout = useCallback(async (order: PaymentOrder) => {
+    console.log('startCheckout called with:', order);
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
       // Get saved cards for the customer
+      console.log('Getting saved cards for customer:', order.customerId);
       const savedCards = order.customerId 
         ? await mockApiService.getSavedCards(order.customerId)
         : [];
+      console.log('Saved cards loaded:', savedCards);
       
       dispatch({
         type: 'START_CHECKOUT',
         payload: { order, savedCards },
       });
     } catch (error) {
+      console.error('Checkout start failed:', error);
       dispatch({
         type: 'SET_ERROR',
         payload: {

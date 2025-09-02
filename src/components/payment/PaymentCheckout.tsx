@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { usePaymentSDK } from '@/contexts/PaymentSDKContext';
@@ -21,7 +21,40 @@ interface PaymentCheckoutProps {
 }
 
 export function PaymentCheckout({ className, order, onClose }: PaymentCheckoutProps) {
-  const { checkoutState, resetCheckout } = usePaymentSDK();
+  const { checkoutState, resetCheckout, initializeSDK, startCheckout, config } = usePaymentSDK();
+
+  // Auto-initialize SDK and start checkout when component mounts
+  useEffect(() => {
+    const initializeAndStart = async () => {
+      try {
+        if (!config) {
+          // Initialize SDK with demo config
+          await initializeSDK({
+            merchantId: 'demo_merchant_123',
+            publicKey: 'pk_demo_key',
+            environment: 'sandbox',
+            theme: {
+              primaryColor: '#2563eb',
+              borderRadius: 'md',
+            }
+          });
+        }
+        
+        // Start checkout with the order
+        await startCheckout({
+          orderId: `order_${Date.now()}`,
+          amount: order.amount,
+          currency: order.currency,
+          description: order.description,
+          customerId: 'demo_customer_123', // Demo customer to show saved cards
+        });
+      } catch (error) {
+        console.error('Failed to initialize checkout:', error);
+      }
+    };
+
+    initializeAndStart();
+  }, [config, initializeSDK, startCheckout, order]);
 
   const handleBack = () => {
     if (checkoutState.currentStep === 'payment') {
