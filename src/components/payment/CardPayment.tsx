@@ -28,6 +28,9 @@ export function CardPayment({ className }: CardPaymentProps) {
     setCvv(value);
   };
 
+  // Mask CVV input with dots or asterisks
+  const maskedCvv = cvv.replace(/./g, '•');
+
   const getCardBrandIcon = (brand: string) => {
     switch (brand) {
       case 'visa': return '💳';
@@ -189,14 +192,29 @@ export function CardPayment({ className }: CardPaymentProps) {
           <CardContent className="pt-6">
             <div className="space-y-2">
               <Label htmlFor="cvv">CVV for **** **** **** {selectedCard.last4}</Label>
-              <Input
-                id="cvv"
-                placeholder="123"
-                value={cvv}
-                onChange={handleCVVChange}
-                type="password"
-                maxLength={4}
-              />
+              <div className="relative">
+                <Input
+                  id="cvv"
+                  placeholder="123"
+                  value={cvv}
+                  onChange={handleCVVChange}
+                  type="password"
+                  maxLength={4}
+                  className="pr-4"
+                  style={{
+                    fontFamily: 'monospace',
+                    letterSpacing: '0.2em'
+                  }}
+                />
+                {cvv && (
+                  <div
+                    className="absolute inset-0 flex items-center justify-center pointer-events-none text-muted-foreground font-mono text-lg tracking-wider"
+                    style={{ padding: '12px 16px' }}
+                  >
+                    {maskedCvv}
+                  </div>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground">
                 Enter the 3-4 digit security code from the back of your card
               </p>

@@ -113,10 +113,10 @@ function paymentSDKReducer(state: PaymentSDKState, action: PaymentSDKAction): Pa
         checkoutState: {
           mode: 'full',
           currentStep: 'methods',
-          savedCards: [],
+          savedCards: state.checkoutState.savedCards,  // Preserve saved cards
           loading: false,
         },
-        currentOrder: null,
+        currentOrder: state.currentOrder,  // Preserve current order
       };
 
     default:

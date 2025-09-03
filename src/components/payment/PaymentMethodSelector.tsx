@@ -70,51 +70,6 @@ export function PaymentMethodSelector({ className }: PaymentMethodSelectorProps)
         </p>
       </div>
 
-      {checkoutState.mode === 'quick' && checkoutState.savedCards.length > 0 && (
-        <div className="mb-6">
-          <h3 className="text-lg font-medium text-foreground mb-3">Saved Cards</h3>
-          <div className="space-y-3">
-            {checkoutState.savedCards.map((card) => (
-              <Card 
-                key={card.tokenId}
-                className="cursor-pointer hover:shadow-md transition-all duration-200 border-2 hover:border-primary/20"
-                onClick={() => handleMethodSelect({ 
-                  id: 'saved_card', 
-                  type: 'card', 
-                  name: `Card ending ${card.last4}`, 
-                  icon: '💳', 
-                  enabled: true 
-                })}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center text-white font-semibold">
-                        {card.brand.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <p className="font-medium text-foreground">
-                          •••• •••• •••• {card.last4}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {card.brand.toUpperCase()} • Expires {card.expiryMonth}/{card.expiryYear}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge variant="secondary">Saved</Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <div className="my-6 flex items-center">
-            <div className="flex-1 border-t border-border"></div>
-            <span className="px-4 text-sm text-muted-foreground">or choose another method</span>
-            <div className="flex-1 border-t border-border"></div>
-          </div>
-        </div>
-      )}
-
       <div className="grid gap-4">
         {paymentMethods.map((method) => (
           <Card

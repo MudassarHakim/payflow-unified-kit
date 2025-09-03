@@ -131,10 +131,14 @@ class MockApiService {
 
   async createHostedCardCapture(): Promise<{ hccUrl: string; challengeToken: string }> {
     await delay(500);
-    
+
+    const challengeToken = `challenge_${Date.now()}`;
+    // Use the local hcc.html file for demo purposes
+    const hccUrl = `${window.location.origin}/hcc.html?token=${challengeToken}`;
+
     return {
-      hccUrl: 'https://secure.bankdomain.com/hcc/capture',
-      challengeToken: `challenge_${Date.now()}`,
+      hccUrl,
+      challengeToken,
     };
   }
 
