@@ -25,6 +25,7 @@ export function NetBankingPayment({ className }: NetBankingPaymentProps) {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [isLoadingBanks, setIsLoadingBanks] = React.useState(true);
   const [isProcessing, setIsProcessing] = React.useState(false);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     loadBanks();
@@ -32,11 +33,13 @@ export function NetBankingPayment({ className }: NetBankingPaymentProps) {
   
   // Effect to handle search term changes with debounce
   React.useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      loadBanks(searchTerm);
-    }, 300);
-    
-    return () => clearTimeout(timeoutId);
+    if (searchTerm.length >= 3 || searchTerm === '') {
+      const timeoutId = setTimeout(() => {
+        loadBanks(searchTerm);
+      }, 1000);
+
+      return () => clearTimeout(timeoutId);
+    }
   }, [searchTerm]);
 
   const loadBanks = async (search?: string): Promise<void> => {
@@ -44,6 +47,9 @@ export function NetBankingPayment({ className }: NetBankingPaymentProps) {
       setIsLoadingBanks(true);
       const bankList = await mockApiService.getNetBankingBanks(search);
       setBanks(bankList);
+      if (search && inputRef.current) {
+        inputRef.current.focus();
+      }
     } catch (error) {
       console.error('Failed to load banks:', error);
     } finally {
@@ -168,6 +174,7 @@ export function NetBankingPayment({ className }: NetBankingPaymentProps) {
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
+          ref={inputRef}
           placeholder="Search for your bank..."
           value={searchTerm}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
@@ -186,13 +193,13 @@ export function NetBankingPayment({ className }: NetBankingPaymentProps) {
         </div>
       )}
 
-      {(!searchTerm || otherBanks.length > 0) && (
+      {(!searchTerm || banks.length > 0) && (
         <div>
           <h3 className="text-lg font-semibold text-foreground mb-3">
             {searchTerm ? 'Search Results' : 'All Banks'}
           </h3>
           <div className="grid gap-3 max-h-64 overflow-y-auto">
-            {otherBanks.map((bank) => (
+            {banks.map((bank) => (
               <BankCard key={bank.code} bank={bank} />
             ))}
           </div>
