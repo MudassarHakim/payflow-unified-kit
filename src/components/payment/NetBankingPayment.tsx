@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,19 +20,29 @@ interface Bank {
 
 export function NetBankingPayment({ className }: NetBankingPaymentProps) {
   const { processPayment, checkoutState } = usePaymentSDK();
-  const [banks, setBanks] = useState<Bank[]>([]);
-  const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isLoadingBanks, setIsLoadingBanks] = useState(true);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [banks, setBanks] = React.useState<Bank[]>([]);
+  const [selectedBank, setSelectedBank] = React.useState<Bank | null>(null);
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [isLoadingBanks, setIsLoadingBanks] = React.useState(true);
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     loadBanks();
   }, []);
+  
+  // Effect to handle search term changes with debounce
+  React.useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      loadBanks(searchTerm);
+    }, 300);
+    
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
 
-  const loadBanks = async () => {
+  const loadBanks = async (search?: string): Promise<void> => {
     try {
-      const bankList = await mockApiService.getNetBankingBanks();
+      setIsLoadingBanks(true);
+      const bankList = await mockApiService.getNetBankingBanks(search);
       setBanks(bankList);
     } catch (error) {
       console.error('Failed to load banks:', error);
@@ -41,26 +51,22 @@ export function NetBankingPayment({ className }: NetBankingPaymentProps) {
     }
   };
 
-  const filteredBanks = banks.filter(bank =>
-    bank.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    bank.code.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  // We'll use the banks directly since filtering is now done on the server side
   const popularBanks = banks.filter(bank => 
     ['HDFC', 'ICICI', 'SBI', 'AXIS'].includes(bank.code) && bank.available
   );
 
-  const otherBanks = filteredBanks.filter(bank => 
+  const otherBanks = banks.filter(bank => 
     !['HDFC', 'ICICI', 'SBI', 'AXIS'].includes(bank.code)
   );
 
-  const handleBankSelection = (bank: Bank) => {
+  const handleBankSelection = (bank: Bank): void => {
     if (bank.available) {
       setSelectedBank(bank);
     }
   };
 
-  const handlePayment = async () => {
+  const handlePayment = async (): Promise<void> => {
     if (!selectedBank) return;
     
     setIsProcessing(true);
@@ -78,7 +84,7 @@ export function NetBankingPayment({ className }: NetBankingPaymentProps) {
     }
   };
 
-  const BankCard = ({ bank }: { bank: Bank }) => (
+  const BankCard: React.FC<{ bank: Bank }> = ({ bank }) => (
     <Card
       key={bank.code}
       className={cn(
@@ -164,7 +170,7 @@ export function NetBankingPayment({ className }: NetBankingPaymentProps) {
         <Input
           placeholder="Search for your bank..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
           className="pl-10"
         />
       </div>
@@ -186,14 +192,14 @@ export function NetBankingPayment({ className }: NetBankingPaymentProps) {
             {searchTerm ? 'Search Results' : 'All Banks'}
           </h3>
           <div className="grid gap-3 max-h-64 overflow-y-auto">
-            {(searchTerm ? otherBanks : otherBanks).map((bank) => (
+            {otherBanks.map((bank) => (
               <BankCard key={bank.code} bank={bank} />
             ))}
           </div>
         </div>
       )}
 
-      {searchTerm && filteredBanks.length === 0 && (
+      {searchTerm && banks.length === 0 && (
         <div className="text-center py-8">
           <Building2 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
           <p className="text-muted-foreground">No banks found matching "{searchTerm}"</p>

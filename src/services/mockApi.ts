@@ -138,16 +138,41 @@ class MockApiService {
     };
   }
 
-  async getNetBankingBanks(): Promise<Array<{ code: string; name: string; available: boolean }>> {
+  async getNetBankingBanks(searchTerm?: string): Promise<Array<{ code: string; name: string; available: boolean }>> {
     await delay(300);
     
-    return [
+    const allBanks = [
       { code: 'HDFC', name: 'HDFC Bank', available: true },
       { code: 'ICICI', name: 'ICICI Bank', available: true },
       { code: 'SBI', name: 'State Bank of India', available: true },
       { code: 'AXIS', name: 'Axis Bank', available: true },
       { code: 'KOTAK', name: 'Kotak Mahindra Bank', available: false },
+      { code: 'BOB', name: 'Bank of Baroda', available: true },
+      { code: 'PNB', name: 'Punjab National Bank', available: true },
+      { code: 'CANARA', name: 'Canara Bank', available: true },
+      { code: 'BOI', name: 'Bank of India', available: false },
+      { code: 'UNION', name: 'Union Bank of India', available: true },
+      { code: 'IDBI', name: 'IDBI Bank', available: true },
+      { code: 'INDUSIND', name: 'IndusInd Bank', available: true },
+      { code: 'YES', name: 'Yes Bank', available: false },
+      { code: 'FEDERAL', name: 'Federal Bank', available: true },
+      { code: 'IDFC', name: 'IDFC First Bank', available: true },
+      { code: 'RBL', name: 'RBL Bank', available: true },
+      { code: 'KARNATAKA', name: 'Karnataka Bank', available: false },
+      { code: 'SOUTH', name: 'South Indian Bank', available: true },
+      { code: 'BANDHAN', name: 'Bandhan Bank', available: true },
+      { code: 'DEUTSCHE', name: 'Deutsche Bank', available: false },
     ];
+    
+    if (!searchTerm) {
+      return allBanks;
+    }
+    
+    // Filter banks based on search term
+    return allBanks.filter(bank => 
+      bank.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      bank.code.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   }
 
   async getWalletProviders(): Promise<Array<{ id: string; name: string; available: boolean }>> {

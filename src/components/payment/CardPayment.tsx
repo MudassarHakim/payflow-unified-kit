@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,7 @@ interface CardPaymentProps {
 
 export function CardPayment({ className }: CardPaymentProps) {
   const { processPayment, checkoutState } = usePaymentSDK();
-  const [cardData, setCardData] = useState({
+  const [cardData, setCardData] = React.useState({
     cardNumber: '',
     expiryMonth: '',
     expiryYear: '',
@@ -23,8 +23,9 @@ export function CardPayment({ className }: CardPaymentProps) {
     holderName: '',
     saveCard: false,
   });
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [showHCC, setShowHCC] = useState(false);
+  const [isProcessing, setIsProcessing] = React.useState(false);
+  const [showHCC, setShowHCC] = React.useState(false);
+  const [expiryError, setExpiryError] = React.useState('');
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
@@ -40,11 +41,44 @@ export function CardPayment({ className }: CardPaymentProps) {
       value = value.substring(0, 2) + '/' + value.substring(2, 4);
     }
     const [month, year] = value.split('/');
+    
+    // Clear previous error
+    setExpiryError('');
+    
     setCardData(prev => ({ 
       ...prev, 
       expiryMonth: month || '',
       expiryYear: year || ''
     }));
+    
+    // Validate expiry date if both month and year are entered
+    if (month && year && month.length === 2 && year.length === 2) {
+      validateExpiryDate(month, year);
+    }
+  };
+  
+  const validateExpiryDate = (month: string, year: string) => {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-11
+    const currentYear = currentDate.getFullYear() % 100; // Get last 2 digits of year
+    
+    const expiryMonth = parseInt(month, 10);
+    const expiryYear = parseInt(year, 10);
+    
+    // Check if month is valid (1-12)
+    if (expiryMonth < 1 || expiryMonth > 12) {
+      setExpiryError('Invalid month');
+      return false;
+    }
+    
+    // Check if the expiry date is in the past
+    if ((expiryYear < currentYear) || 
+        (expiryYear === currentYear && expiryMonth < currentMonth)) {
+      setExpiryError('Card has expired');
+      return false;
+    }
+    
+    return true;
   };
 
   const handleCVVChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,6 +121,7 @@ export function CardPayment({ className }: CardPaymentProps) {
   const isFormValid = cardData.cardNumber.replace(/\s/g, '').length >= 13 &&
                      cardData.expiryMonth &&
                      cardData.expiryYear &&
+                     !expiryError &&
                      cardData.cvv.length >= 3 &&
                      cardData.holderName.trim();
 
@@ -168,7 +203,15 @@ export function CardPayment({ className }: CardPaymentProps) {
                 placeholder="MM/YY"
                 value={cardData.expiryMonth + (cardData.expiryYear ? '/' + cardData.expiryYear : '')}
                 onChange={handleExpiryChange}
+                className={cn(
+                  expiryError && "border-destructive"
+                )}
               />
+              {expiryError && (
+                <p className="text-sm text-destructive">
+                  {expiryError}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="cvv">CVV</Label>
