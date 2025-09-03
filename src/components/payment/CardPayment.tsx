@@ -24,7 +24,8 @@ export function CardPayment({ className }: CardPaymentProps) {
   const [paymentMode, setPaymentMode] = React.useState<'saved' | 'new'>('saved');
 
   const handleCVVChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^0-9]/g, '').substring(0, 4);
+    // Only allow numeric input and limit length to 4
+    const value = e.target.value.replace(/\D/g, '').substring(0, 4);
     setCvv(value);
   };
 
@@ -106,6 +107,19 @@ export function CardPayment({ className }: CardPaymentProps) {
           sandbox="allow-scripts allow-same-origin allow-forms"
           onLoad={() => {
             // Add any onLoad logic if needed
+          }}
+        />
+        {/* Add overlay input for CVV masking and numeric input enforcement */}
+        <input
+          type="password"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          maxLength={4}
+          className="absolute top-0 left-0 w-full h-full opacity-0"
+          onKeyDown={(e) => {
+            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
+              e.preventDefault();
+            }
           }}
         />
         <Button
