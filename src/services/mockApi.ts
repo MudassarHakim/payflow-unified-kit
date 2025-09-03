@@ -105,7 +105,15 @@ class MockApiService {
     
     if (successRate > 0.85) {
       // Simulate payment failure
-      throw new Error('Payment failed');
+      // For testing, do not throw error, return failure status instead
+      return {
+        paymentId: `pay_${Date.now()}`,
+        status: 'failed',
+        amount: data.order.amount,
+        currency: data.order.currency,
+        paymentMethod: data.method.name,
+        message: 'Payment failed',
+      };
     } else if (successRate > 0.7 && data.method.type === 'card') {
       // Simulate 3DS challenge requirement
       return {
