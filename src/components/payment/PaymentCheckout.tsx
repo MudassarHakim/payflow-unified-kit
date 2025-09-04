@@ -6,6 +6,7 @@ import { PaymentMethodSelector } from './PaymentMethodSelector';
 import { CardPayment } from './CardPayment';
 import { UPIPayment } from './UPIPayment';
 import { NetBankingPayment } from './NetBankingPayment';
+import { WalletPayment } from './WalletPaymentNew';
 import { PaymentResult } from './PaymentResult';
 import { ArrowLeft, Shield, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -39,7 +40,7 @@ export function PaymentCheckout({ className, order, onClose }: PaymentCheckoutPr
             }
           });
         }
-        
+
         // Start checkout with the order
         await startCheckout({
           orderId: `order_${Date.now()}`,
@@ -76,10 +77,10 @@ export function PaymentCheckout({ className, order, onClose }: PaymentCheckoutPr
     switch (checkoutState.currentStep) {
       case 'methods':
         return <PaymentMethodSelector />;
-      
+
       case 'payment':
         if (!checkoutState.selectedMethod) return null;
-        
+
         switch (checkoutState.selectedMethod.type) {
           case 'card':
             return <CardPayment />;
@@ -87,6 +88,20 @@ export function PaymentCheckout({ className, order, onClose }: PaymentCheckoutPr
             return <UPIPayment />;
           case 'netbanking':
             return <NetBankingPayment />;
+          case 'wallet':
+            return (
+              <WalletPayment
+                orderAmount={order.amount}
+                currency={order.currency}
+                onPaymentInitiate={(data) => {
+                  console.log('Wallet payment initiated:', data);
+                  // Handle wallet payment initiation
+                }}
+                onCancel={() => {
+                  resetCheckout();
+                }}
+              />
+            );
           default:
             return (
               <div className="text-center py-8">
@@ -96,7 +111,7 @@ export function PaymentCheckout({ className, order, onClose }: PaymentCheckoutPr
               </div>
             );
         }
-      
+
       case 'processing':
         return (
           <div className="text-center py-12">
@@ -109,10 +124,10 @@ export function PaymentCheckout({ className, order, onClose }: PaymentCheckoutPr
             </p>
           </div>
         );
-      
+
       case 'result':
         return <PaymentResult />;
-      
+
       default:
         return null;
     }
@@ -132,7 +147,7 @@ export function PaymentCheckout({ className, order, onClose }: PaymentCheckoutPr
             <ArrowLeft className="w-4 h-4" />
             <span>Back</span>
           </Button>
-          
+
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
             <div className="flex items-center space-x-1">
               <Shield className="w-4 h-4" />
@@ -173,7 +188,7 @@ export function PaymentCheckout({ className, order, onClose }: PaymentCheckoutPr
             {['methods', 'payment', 'processing'].map((step, index) => {
               const isActive = checkoutState.currentStep === step;
               const isCompleted = ['methods', 'payment', 'processing'].indexOf(checkoutState.currentStep) > index;
-              
+
               return (
                 <div key={step} className="flex items-center">
                   <div
