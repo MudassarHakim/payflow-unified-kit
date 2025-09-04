@@ -91,7 +91,7 @@ describe('WalletApiService', () => {
       // Since mobikwik has balanceCheckRequired: true, it should check balance
       // and with amount=50000, it should fail due to insufficient balance
       expect(validation.valid).toBe(false);
-      expect(validation.reason).toMatch(/^Insufficient wallet balance\. You need ₹\d+ more\.$/);
+      expect(validation.reason).toMatch(/^Insufficient wallet balance\. You need ₹\d{1,3}(,\d{3})* more\.$/);
     });
 
     it('should reject invalid wallet provider', async () => {

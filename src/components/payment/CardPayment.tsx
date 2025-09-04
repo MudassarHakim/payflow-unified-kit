@@ -109,19 +109,10 @@ export function CardPayment({ className }: CardPaymentProps) {
             // Add any onLoad logic if needed
           }}
         />
-        {/* Add overlay input for CVV masking and numeric input enforcement */}
-        <input
-          type="password"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          maxLength={4}
-          className="absolute top-0 left-0 w-full h-full opacity-0"
-          onKeyDown={(e) => {
-            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
-              e.preventDefault();
-            }
-          }}
-        />
+        {/* Add CVV input masking and numeric validation only on the CVV input field inside iframe */}
+        {/* Since iframe content cannot be directly controlled, use postMessage or other secure methods to mask CVV */}
+        {/* For now, remove overlay input to avoid blocking interaction */}
+        {/* TODO: Implement secure CVV masking inside iframe via secure hosted card capture */}
         <Button
           className="mt-4 w-full"
           onClick={() => {

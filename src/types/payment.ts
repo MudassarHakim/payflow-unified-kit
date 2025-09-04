@@ -94,6 +94,59 @@ export interface BNPLData {
   interestRate: number;
 }
 
+export interface EMIProvider {
+  id: string;
+  name: string;
+  logo: string;
+  minAmount: number;
+  maxAmount: number;
+  supportedTenures: number[];
+  interestRates: Record<number, number>; // tenure -> interest rate
+  processingFee?: number;
+  enabled: boolean;
+}
+
+export interface EMIPlan {
+  providerId: string;
+  providerName: string;
+  tenure: number; // in months
+  interestRate: number;
+  monthlyAmount: number;
+  totalAmount: number;
+  processingFee: number;
+  totalInterest: number;
+  emiAmount: number;
+}
+
+export interface EMIData {
+  providerId: string;
+  planId: string;
+  tenure: number;
+  emiAmount: number;
+  totalAmount: number;
+  interestRate: number;
+  processingFee: number;
+}
+
+export interface EMICalculationRequest {
+  amount: number;
+  tenure: number;
+  interestRate: number;
+  processingFee?: number;
+}
+
+export interface EMICalculationResponse {
+  monthlyEMI: number;
+  totalAmount: number;
+  totalInterest: number;
+  processingFee: number;
+  emiBreakdown: {
+    principal: number;
+    interest: number;
+    processingFee: number;
+  };
+}
+
 export type CheckoutMode = 'quick' | 'full';
 
 export interface CheckoutState {

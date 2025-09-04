@@ -1,451 +1,430 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Card Capture - PayFlow</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 40px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #333;
-        }
-
-        .input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.2s;
-        }
-
-        .input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .input.error {
-            border-color: #e74c3c;
-        }
-
-        .row {
-            display: flex;
-            gap: 12px;
-        }
-
-        .row .form-group {
-            flex: 1;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin: 20px 0;
-        }
-
-        .checkbox {
-            width: 16px;
-            height: 16px;
-            margin-right: 8px;
-        }
-
-        .button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .button:hover {
-            transform: translateY(-1px);
-        }
-
-        .button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .security-notice {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #666;
-        }
-
-        .security-notice .icon {
-            color: #28a745;
-            margin-right: 8px;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            color: #666;
-        }
-
-        .loading.show {
-            display: block;
-        }
-
-        .spinner {
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #667eea;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .success {
-            display: none;
-            text-align: center;
-            color: #28a745;
-        }
-
-        .success.show {
-            display: block;
-        }
-
-        .error {
-            display: none;
-            background: #fee;
-            color: #e74c3c;
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-size: 14px;
-        }
-
-        .error.show {
-            display: block;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hosted Card Capture</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+      background: #f8f9fa;
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #374151;
+      font-size: 14px;
+    }
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus {
+      outline: none;
+      border-color: #0075FF;
+      box-shadow: 0 0 0 3px rgba(0, 117, 255, 0.1);
+    }
+    input.error {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+    .error-message {
+      color: #ef4444;
+      font-size: 12px;
+      margin-top: 4px;
+      display: none;
+    }
+    .card-type-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 16px;
+      opacity: 0.8;
+      font-size: 18px;
+    }
+    .input-container {
+      position: relative;
+    }
+    button[type="submit"] {
+      background: linear-gradient(135deg, #0075FF 0%, #0056CC 100%);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 117, 255, 0.3);
+    }
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .security-notice {
+      margin-top: 24px;
+      padding: 16px;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border: 1px solid #bae6fd;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #0369a1;
+      line-height: 1.5;
+    }
+    .security-notice svg {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+    .security-notice-content {
+      display: flex;
+      align-items: flex-start;
+    }
+    .success-message {
+      display: none;
+      padding: 12px;
+      background: #d1fae5;
+      border: 1px solid #a7f3d0;
+      border-radius: 6px;
+      color: #065f46;
+      font-size: 14px;
+      margin-top: 16px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">🔒 Secure Card Capture</div>
-            <div class="subtitle">Your payment information is encrypted and secure</div>
+  <div class="container">
+    <form id="cardForm">
+      <div class="form-group">
+        <label for="cardNumber">Card Number</label>
+        <div class="input-container">
+          <input type="text" id="cardNumber" name="cardNumber" maxlength="23" placeholder="1234 5678 9012 3456" inputmode="numeric" aria-describedby="cardNumberError" />
+          <div id="cardTypeIcon" class="card-type-icon" aria-hidden="true"></div>
         </div>
+        <div id="cardNumberError" class="error-message" role="alert">Please enter a valid card number</div>
+      </div>
 
-        <form id="cardForm">
-            <div class="form-group">
-                <label class="label" for="cardNumber">Card Number</label>
-                <input
-                    type="text"
-                    id="cardNumber"
-                    class="input"
-                    placeholder="1234 5678 9012 3456"
-                    maxlength="19"
-                    required
-                />
-            </div>
+      <div class="form-group">
+        <label for="expiry">Expiry Date (MM/YY)</label>
+        <input type="text" id="expiry" name="expiry" maxlength="5" placeholder="MM/YY" inputmode="numeric" aria-describedby="expiryError" />
+        <div id="expiryError" class="error-message" role="alert">Please enter a valid expiry date</div>
+      </div>
 
-            <div class="row">
-                <div class="form-group">
-                    <label class="label" for="expiryMonth">Expiry Month</label>
-                    <select id="expiryMonth" class="input" required>
-                        <option value="">MM</option>
-                        <option value="01">01</option>
-                        <option value="02">02</option>
-                        <option value="03">03</option>
-                        <option value="04">04</option>
-                        <option value="05">05</option>
-                        <option value="06">06</option>
-                        <option value="07">07</option>
-                        <option value="08">08</option>
-                        <option value="09">09</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="label" for="expiryYear">Expiry Year</label>
-                    <select id="expiryYear" class="input" required>
-                        <option value="">YYYY</option>
-                        <script>
-                            const currentYear = new Date().getFullYear();
-                            for (let i = 0; i < 10; i++) {
-                                document.write(`<option value="${currentYear + i}">${currentYear + i}</option>`);
-                            }
-                        </script>
-                    </select>
-                </div>
-            </div>
+      <div class="form-group">
+        <label for="cvv">CVV</label>
+        <input type="password" id="cvv" name="cvv" maxlength="4" inputmode="numeric" placeholder="•••" aria-describedby="cvvError" />
+        <div id="cvvError" class="error-message" role="alert">Please enter a valid CVV</div>
+      </div>
 
-            <div class="form-group">
-                <label class="label" for="cvv">CVV</label>
-                <input
-                    type="text"
-                    id="cvv"
-                    class="input"
-                    placeholder="123"
-                    maxlength="4"
-                    required
-                />
-            </div>
+      <button type="submit" id="submitBtn">Add Card Securely</button>
 
-            <div class="form-group">
-                <label class="label" for="holderName">Cardholder Name</label>
-                <input
-                    type="text"
-                    id="holderName"
-                    class="input"
-                    placeholder="John Doe"
-                    required
-                />
-            </div>
+      <div id="successMessage" class="success-message" role="alert">
+        Card added successfully! Processing payment...
+      </div>
+    </form>
 
-            <div class="checkbox-group">
-                <input type="checkbox" id="saveCard" class="checkbox" checked />
-                <label for="saveCard" class="label" style="margin-bottom: 0;">Save card for future payments</label>
-            </div>
-
-            <button type="submit" class="button" id="submitBtn">
-                Add Card Securely
-            </button>
-        </form>
-
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <div>Processing your card...</div>
+    <div class="security-notice">
+      <div class="security-notice-content">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2L3 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-9-5z"/>
+          <path d="M10 17l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+        <div>
+          <strong>Bank-Grade Security</strong><br>
+          Your card details are encrypted and processed through our PCI DSS compliant systems. We never store your full card number or CVV.
         </div>
-
-        <div class="success" id="success">
-            <div style="font-size: 48px; margin-bottom: 10px;">✅</div>
-            <div>Card added successfully!</div>
-            <div style="font-size: 12px; margin-top: 10px; color: #666;">
-                Redirecting back to checkout...
-            </div>
-        </div>
-
-        <div class="error" id="error">
-            <div>❌ Failed to process card. Please try again.</div>
-        </div>
-
-        <div class="security-notice">
-            <span class="icon">🔒</span>
-            <strong>256-bit SSL Encryption</strong><br>
-            Your card details are protected by bank-level security
-        </div>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // Get URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const challengeToken = urlParams.get('token') || 'demo_token';
+  <script>
+    // Form elements
+    const cardNumberInput = document.getElementById('cardNumber');
+    const expiryInput = document.getElementById('expiry');
+    const cvvInput = document.getElementById('cvv');
+    const submitBtn = document.getElementById('submitBtn');
+    const successMessage = document.getElementById('successMessage');
 
-        // Form validation
-        function formatCardNumber(value) {
-            return value.replace(/\s+/g, '').replace(/[^0-9]/gi, '').substring(0, 16).replace(/(.{4})/g, '$1 ').trim();
+    // Error elements
+    const cardNumberError = document.getElementById('cardNumberError');
+    const expiryError = document.getElementById('expiryError');
+    const cvvError = document.getElementById('cvvError');
+
+    // Validation state
+    let currentCardType = 'unknown';
+    let isFormValid = false;
+
+    // Card validation utilities
+    function luhnCheck(cardNumber) {
+      const digits = cardNumber.replace(/\s/g, '');
+      if (!/^\d+$/.test(digits)) return false;
+
+      let sum = 0;
+      let shouldDouble = false;
+
+      for (let i = digits.length - 1; i >= 0; i--) {
+        let digit = parseInt(digits.charAt(i), 10);
+
+        if (shouldDouble) {
+          digit *= 2;
+          if (digit > 9) digit -= 9;
         }
 
-        function validateCardNumber(number) {
-            const cleaned = number.replace(/\s+/g, '');
-            return cleaned.length >= 13 && cleaned.length <= 19 && /^\d+$/.test(cleaned);
+        sum += digit;
+        shouldDouble = !shouldDouble;
+      }
+
+      return sum % 10 === 0;
+    }
+
+    function getCardType(cardNumber) {
+      const number = cardNumber.replace(/\s/g, '');
+      if (/^4/.test(number)) return 'visa';
+      if (/^5[1-5]/.test(number) || /^2[2-7]/.test(number)) return 'mastercard';
+      if (/^3[47]/.test(number)) return 'amex';
+      if (/^6(?:011|5)/.test(number)) return 'discover';
+      if (/^35/.test(number)) return 'jcb';
+      if (/^30[0-5]/.test(number) || /^36/.test(number) || /^38/.test(number)) return 'diners';
+      return 'unknown';
+    }
+
+    function getExpectedCVVLength(cardType) {
+      return cardType === 'amex' ? 4 : 3;
+    }
+
+    function formatCardNumber(value) {
+      const digits = value.replace(/\D/g, '');
+      const groups = digits.match(/(\d{1,4})/g) || [];
+      return groups.join(' ').substring(0, 23);
+    }
+
+    function updateCardTypeIcon(cardType) {
+      const iconElement = document.getElementById('cardTypeIcon');
+      const icons = {
+        visa: '💳',
+        mastercard: '💳',
+        amex: '💳',
+        discover: '💳',
+        jcb: '💳',
+        diners: '💳'
+      };
+      iconElement.textContent = icons[cardType] || '';
+    }
+
+    function showError(element, message) {
+      element.textContent = message;
+      element.style.display = 'block';
+      element.previousElementSibling.classList.add('error');
+    }
+
+    function hideError(element) {
+      element.style.display = 'none';
+      element.previousElementSibling.classList.remove('error');
+    }
+
+    function validateCardNumber() {
+      const value = cardNumberInput.value.replace(/\s/g, '');
+      const digitsOnly = value.replace(/\D/g, '');
+
+      if (digitsOnly.length === 0) {
+        hideError(cardNumberError);
+        currentCardType = 'unknown';
+        updateCardTypeIcon(currentCardType);
+        return true;
+      }
+
+      if (digitsOnly.length < 13 || digitsOnly.length > 19) {
+        showError(cardNumberError, 'Card number must be 13-19 digits');
+        currentCardType = 'unknown';
+        updateCardTypeIcon(currentCardType);
+        return false;
+      }
+
+      if (!luhnCheck(digitsOnly)) {
+        showError(cardNumberError, 'Please enter a valid card number');
+        currentCardType = 'unknown';
+        updateCardTypeIcon(currentCardType);
+        return false;
+      }
+
+      currentCardType = getCardType(digitsOnly);
+      if (currentCardType === 'unknown') {
+        showError(cardNumberError, 'Unsupported card type. Please use Visa, Mastercard, American Express, or Discover');
+        updateCardTypeIcon(currentCardType);
+        return false;
+      }
+
+      updateCardTypeIcon(currentCardType);
+      hideError(cardNumberError);
+      return true;
+    }
+
+    function validateExpiry() {
+      const value = expiryInput.value.trim();
+
+      if (value.length === 0) {
+        hideError(expiryError);
+        return true;
+      }
+
+      const pattern = /^(0[1-9]|1[0-2])\/[0-9]{2}$/;
+      if (!pattern.test(value)) {
+        showError(expiryError, 'Please enter expiry date in MM/YY format');
+        return false;
+      }
+
+      const [month, year] = value.split('/');
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear() % 100;
+      const currentMonth = currentDate.getMonth() + 1;
+      const expMonth = parseInt(month, 10);
+      const expYear = parseInt(year, 10);
+
+      if (expYear < currentYear || (expYear === currentYear && expMonth < currentMonth)) {
+        showError(expiryError, 'Card has expired');
+        return false;
+      }
+
+      hideError(expiryError);
+      return true;
+    }
+
+    function validateCVV() {
+      const value = cvvInput.value.trim();
+
+      if (value.length === 0) {
+        hideError(cvvError);
+        return true;
+      }
+
+      const expectedLength = getExpectedCVVLength(currentCardType);
+      if (value.length !== expectedLength) {
+        showError(cvvError, `CVV must be ${expectedLength} digits for this card type`);
+        return false;
+      }
+
+      hideError(cvvError);
+      return true;
+    }
+
+    function validateForm() {
+      const isCardValid = validateCardNumber();
+      const isExpiryValid = validateExpiry();
+      const isCVVValid = validateCVV();
+
+      isFormValid = isCardValid && isExpiryValid && isCVVValid && cardNumberInput.value.trim() && expiryInput.value.trim() && cvvInput.value.trim();
+      submitBtn.disabled = !isFormValid;
+      return isFormValid;
+    }
+
+    // Event listeners
+    cardNumberInput.addEventListener('input', (e) => {
+      const start = e.target.selectionStart;
+      const end = e.target.selectionEnd;
+      const oldValue = e.target.value;
+
+      e.target.value = formatCardNumber(e.target.value);
+
+      // Preserve cursor position
+      const newLength = e.target.value.length;
+      const oldLength = oldValue.length;
+      const diff = newLength - oldLength;
+
+      if (diff > 0) {
+        e.target.setSelectionRange(start + diff, end + diff);
+      } else {
+        e.target.setSelectionRange(Math.max(start + diff, 0), Math.max(end + diff, 0));
+      }
+
+      validateForm();
+    });
+
+    cardNumberInput.addEventListener('blur', validateCardNumber);
+
+    expiryInput.addEventListener('input', (e) => {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length >= 2) {
+        const month = value.slice(0, 2);
+        const year = value.slice(2, 4);
+        if (parseInt(month, 10) > 12) {
+          value = '12' + year;
         }
+        value = month + (year ? '/' + year : '');
+      }
+      e.target.value = value.slice(0, 5);
+      validateForm();
+    });
 
-        function validateExpiry(month, year) {
-            const currentDate = new Date();
-            const currentYear = currentDate.getFullYear();
-            const currentMonth = currentDate.getMonth() + 1;
+    expiryInput.addEventListener('blur', validateExpiry);
 
-            const expMonth = parseInt(month);
-            const expYear = parseInt(year);
+    cvvInput.addEventListener('input', (e) => {
+      const value = e.target.value.replace(/\D/g, '');
+      const expectedLength = getExpectedCVVLength(currentCardType);
+      e.target.value = value.slice(0, expectedLength);
+      validateForm();
+    });
 
-            if (expYear < currentYear || (expYear === currentYear && expMonth < currentMonth)) {
-                return false;
-            }
-            return true;
-        }
+    cvvInput.addEventListener('blur', validateCVV);
 
-        function validateCVV(cvv) {
-            return cvv.length >= 3 && cvv.length <= 4 && /^\d+$/.test(cvv);
-        }
+    // Form submission
+    document.getElementById('cardForm').addEventListener('submit', (e) => {
+      e.preventDefault();
 
-        // Format card number input
-        document.getElementById('cardNumber').addEventListener('input', function(e) {
-            e.target.value = formatCardNumber(e.target.value);
-        });
+      if (!validateForm()) {
+        return;
+      }
 
-        // Form submission
-        document.getElementById('cardForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+      // Show success message and disable form
+      successMessage.style.display = 'block';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Processing...';
 
-            const cardNumber = document.getElementById('cardNumber').value;
-            const expiryMonth = document.getElementById('expiryMonth').value;
-            const expiryYear = document.getElementById('expiryYear').value;
-            const cvv = document.getElementById('cvv').value;
-            const holderName = document.getElementById('holderName').value;
-            const saveCard = document.getElementById('saveCard').checked;
+      const cardData = {
+        cardNumber: cardNumberInput.value.replace(/\s/g, ''),
+        expiry: expiryInput.value,
+        cvv: cvvInput.value,
+        cardType: currentCardType
+      };
 
-            // Clear previous errors
-            document.querySelectorAll('.input').forEach(input => input.classList.remove('error'));
-            document.getElementById('error').classList.remove('show');
+      // Send data to parent window
+      window.parent.postMessage({
+        type: 'cardData',
+        data: cardData
+      }, '*');
+    });
 
-            // Validate inputs
-            let hasError = false;
-
-            if (!validateCardNumber(cardNumber)) {
-                document.getElementById('cardNumber').classList.add('error');
-                hasError = true;
-            }
-
-            if (!expiryMonth || !expiryYear || !validateExpiry(expiryMonth, expiryYear)) {
-                document.getElementById('expiryMonth').classList.add('error');
-                document.getElementById('expiryYear').classList.add('error');
-                hasError = true;
-            }
-
-            if (!validateCVV(cvv)) {
-                document.getElementById('cvv').classList.add('error');
-                hasError = true;
-            }
-
-            if (!holderName.trim()) {
-                document.getElementById('holderName').classList.add('error');
-                hasError = true;
-            }
-
-            if (hasError) {
-                document.getElementById('error').textContent = '❌ Please correct the highlighted fields';
-                document.getElementById('error').classList.add('show');
-                return;
-            }
-
-            // Show loading
-            document.getElementById('cardForm').style.display = 'none';
-            document.getElementById('loading').classList.add('show');
-
-            try {
-                // Simulate API call delay
-                await new Promise(resolve => setTimeout(resolve, 2000));
-
-                // Mock successful card capture
-                const mockCardData = {
-                    tokenId: `card_${Date.now()}`,
-                    last4: cardNumber.slice(-4),
-                    brand: getCardBrand(cardNumber.replace(/\s+/g, '')),
-                    expiryMonth: expiryMonth,
-                    expiryYear: expiryYear.toString().slice(-2),
-                    holderName: holderName,
-                    saved: saveCard
-                };
-
-                // Send data back to parent window
-                if (window.parent) {
-                    window.parent.postMessage({
-                        type: 'CARD_CAPTURE_SUCCESS',
-                        token: challengeToken,
-                        cardData: mockCardData
-                    }, '*');
-                }
-
-                // Show success
-                document.getElementById('loading').classList.remove('show');
-                document.getElementById('success').classList.add('show');
-
-                // Auto-close after 2 seconds
-                setTimeout(() => {
-                    if (window.parent) {
-                        window.parent.postMessage({
-                            type: 'CARD_CAPTURE_CLOSE',
-                            token: challengeToken
-                        }, '*');
-                    }
-                }, 2000);
-
-            } catch (error) {
-                console.error('Card capture failed:', error);
-                document.getElementById('loading').classList.remove('show');
-                document.getElementById('cardForm').style.display = 'block';
-                document.getElementById('error').textContent = '❌ Failed to process card. Please try again.';
-                document.getElementById('error').classList.add('show');
-            }
-        });
-
-        function getCardBrand(number) {
-            const cleaned = number.replace(/\s+/g, '');
-            if (cleaned.startsWith('4')) return 'visa';
-            if (cleaned.startsWith('5') || cleaned.startsWith('2')) return 'mastercard';
-            if (cleaned.startsWith('3')) return 'amex';
-            return 'unknown';
-        }
-
-        // Handle messages from parent
-        window.addEventListener('message', function(event) {
-            if (event.data.type === 'CLOSE_HCC') {
-                // Handle close request from parent
-                window.parent.postMessage({
-                    type: 'CARD_CAPTURE_CLOSE',
-                    token: challengeToken
-                }, '*');
-            }
-        });
-    </script>
+    // Initial validation
+    validateForm();
+  </script>
 </body>
 </html>
