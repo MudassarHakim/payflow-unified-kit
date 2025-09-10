@@ -23,17 +23,28 @@ const FXDebitCardCheckout: React.FC<FXDebitCardCheckoutProps> = ({ onClose }) =>
   }, [fxDebitCardMethod, checkoutState.currentStep, selectPaymentMethod]);
 
   const handleProceed = async () => {
+    if (!fxDebitCardMethod) {
+      setError('FX Debit Card method not available');
+      return;
+    }
+
     setIsProcessing(true);
     setError(null);
 
     try {
+      // Ensure the FX Debit Card method is selected before processing
+      if (checkoutState.selectedMethod?.id !== fxDebitCardMethod.id) {
+        selectPaymentMethod(fxDebitCardMethod);
+        // Wait a moment for the state to update
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+
       // Prepare FX Debit Card payment data
       const paymentData = {
         cardType: 'fxdebit',
         amount: 499, // FX Debit Card fee
         currency: 'INR',
         description: 'FX Debit Card Issuance',
-        // Additional FX Debit Card specific data can be added here
         features: [
           'zero_fx_markup',
           'international_transactions',
@@ -42,26 +53,33 @@ const FXDebitCardCheckout: React.FC<FXDebitCardCheckoutProps> = ({ onClose }) =>
         ]
       };
 
+      console.log('Processing FX Debit Card payment with data:', paymentData);
       const result = await processPayment(paymentData);
+      console.log('FX Debit Card payment result:', result);
 
       if (result.status === 'success') {
         console.log('FX Debit Card payment successful:', result);
-        // Handle success - could navigate to success page or show confirmation
+        // Payment successful, the context will handle the step transition
       } else if (result.status === 'requires_action') {
         console.log('FX Debit Card payment requires additional action:', result);
         // Handle cases that require additional user action (3DS, etc.)
       } else {
-        throw new Error(result.message || 'Payment failed');
+        setError(result.message || 'Payment failed. Please try again.');
       }
     } catch (err) {
       console.error('FX Debit Card payment error:', err);
-      setError(err instanceof Error ? err.message : 'Payment processing failed');
+      if (err && typeof err === 'object' && 'message' in err) {
+        setError(err.message as string);
+      } else {
+        setError('Payment processing failed. Please try again.');
+      }
     } finally {
       setIsProcessing(false);
     }
   };
 
-  if (checkoutState.currentStep === 'methods') {
+  // Show the FX Debit Card details when in methods step or when this method is selected
+  if (checkoutState.currentStep === 'methods' || checkoutState.currentStep === 'payment') {
     return (
       <div className="space-y-6">
         {onClose && (
@@ -169,31 +187,43 @@ const FXDebitCardCheckout: React.FC<FXDebitCardCheckoutProps> = ({ onClose }) =>
     );
   }
 
-  return (
-    <div className="text-center py-8">
-      <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-accent/10 rounded-full flex items-center justify-center text-2xl mb-4 mx-auto">
-        💎
+  // Show processing or result states
+  if (checkoutState.currentStep === 'processing') {
+    return (
+      <div className="text-center py-8">
+        <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-accent/10 rounded-full flex items-center justify-center text-2xl mb-4 mx-auto animate-pulse">
+          💎
+        </div>
+        <h3 className="text-xl font-semibold text-foreground mb-2">
+          Processing Payment
+        </h3>
+        <p className="text-muted-foreground mb-6">
+          Please wait while we process your FX Debit Card payment...
+        </p>
+        <div className="w-full bg-secondary/20 rounded-full h-2 mb-4">
+          <div className="bg-primary h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
+        </div>
       </div>
-      <h3 className="text-xl font-semibold text-foreground mb-2">
-        FX Debit Card Payment
-      </h3>
-      <p className="text-muted-foreground mb-6">
-        Zero FX markup on international transactions
-      </p>
-      <div className="bg-gradient-to-r from-primary/5 to-accent/5 p-4 rounded-lg mb-6">
-        <p className="text-sm text-muted-foreground">
-          This is a demo implementation. FX Debit Card payment flow will be integrated here.
+    );
+  }
+
+  if (checkoutState.currentStep === 'result') {
+    return (
+      <div className="text-center py-8">
+        <div className="w-16 h-16 bg-gradient-to-br from-green-500/10 to-green-600/10 rounded-full flex items-center justify-center text-2xl mb-4 mx-auto">
+          ✅
+        </div>
+        <h3 className="text-xl font-semibold text-foreground mb-2">
+          Payment Successful!
+        </h3>
+        <p className="text-muted-foreground mb-6">
+          Your FX Debit Card has been successfully ordered.
         </p>
       </div>
-      <Button
-        onClick={handleProceed}
-        disabled={isProcessing}
-        className="w-full"
-      >
-        {isProcessing ? 'Processing...' : 'Proceed with FX Debit Card'}
-      </Button>
-    </div>
-  );
+    );
+  }
+
+  return null;
 };
 
 export default FXDebitCardCheckout;
