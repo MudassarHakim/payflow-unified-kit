@@ -6,7 +6,7 @@ import { PaymentMethodSelector } from './PaymentMethodSelector';
 import { CardPayment } from './CardPayment';
 import { UPIPayment } from './UPIPayment';
 import { NetBankingPayment } from './NetBankingPayment';
-import { WalletPaymentNew as WalletPayment } from './WalletPaymentNew';
+import { WalletPayment } from './WalletPaymentNew';
 import { PaymentResult } from './PaymentResult';
 import { ArrowLeft, Shield, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
