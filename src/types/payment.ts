@@ -36,7 +36,7 @@ export interface PaymentOrder {
 
 export interface PaymentMethod {
   id: string;
-  type: 'card' | 'upi' | 'netbanking' | 'wallet' | 'bnpl';
+  type: 'card' | 'upi' | 'netbanking' | 'wallet' | 'bnpl' | 'fxdebitcard';
   name: string;
   icon: string;
   enabled: boolean;

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PaymentSDKProvider } from '@/contexts/PaymentSDKContext';
 import { PaymentCheckout } from '@/components/payment/PaymentCheckout';
+import FXDebitCardCheckout from '@/components/payment/FXDebitCardCheckout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +9,7 @@ import { CreditCard, Smartphone, Building2, Wallet, Timer, Shield, Zap } from 'l
 
 const Index = () => {
   const [showCheckout, setShowCheckout] = useState(false);
+  const [showFXDebitCard, setShowFXDebitCard] = useState(false);
 
   const paymentMethods = [
     { icon: CreditCard, name: 'Cards', description: 'Credit/Debit with 3DS2' },
@@ -40,6 +42,16 @@ const Index = () => {
     );
   }
 
+  if (showFXDebitCard) {
+    return (
+      <PaymentSDKProvider>
+        <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 py-8 px-4">
+          <FXDebitCardCheckout onClose={() => setShowFXDebitCard(false)} />
+        </div>
+      </PaymentSDKProvider>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
       {/* Hero Section */}
@@ -55,16 +67,29 @@ const Index = () => {
             </span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Enterprise-grade payment processing with advanced security, seamless UX, 
+            Enterprise-grade payment processing with advanced security, seamless UX,
             and comprehensive payment method support for modern applications.
           </p>
-          <Button
-            size="lg"
-            className="text-lg px-8 py-6 h-auto"
-            onClick={() => setShowCheckout(true)}
-          >
-            Try Demo Checkout
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              size="lg"
+              className="text-lg px-8 py-6 h-auto"
+              onClick={() => setShowCheckout(true)}
+            >
+              Try Demo Checkout
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 py-6 h-auto border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              onClick={() => {
+                setShowFXDebitCard(true);
+                setShowCheckout(false);
+              }}
+            >
+              FX Debit Card
+            </Button>
+          </div>
         </div>
 
         {/* Payment Methods */}

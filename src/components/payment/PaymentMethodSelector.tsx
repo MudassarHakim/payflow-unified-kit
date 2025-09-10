@@ -13,21 +13,13 @@ interface PaymentMethodSelectorProps {
 export function PaymentMethodSelector({ className }: PaymentMethodSelectorProps) {
   const { paymentMethods, checkoutState, selectPaymentMethod } = usePaymentSDK();
 
-  console.log('PaymentMethodSelector render:', { 
-    paymentMethods, 
-    checkoutState,
-    paymentMethodsLength: paymentMethods.length 
-  });
-
   const handleMethodSelect = (method: PaymentMethod) => {
-    console.log('Method selected:', method);
     if (method.enabled) {
       selectPaymentMethod(method);
     }
   };
 
   if (checkoutState.loading) {
-    console.log('PaymentMethodSelector showing loading state');
     return (
       <div className={cn("space-y-4", className)}>
         {[...Array(5)].map((_, i) => (
@@ -48,7 +40,6 @@ export function PaymentMethodSelector({ className }: PaymentMethodSelectorProps)
   }
 
   if (paymentMethods.length === 0 && !checkoutState.loading) {
-    console.log('No payment methods available');
     return (
       <div className={cn("space-y-4", className)}>
         <div className="text-center py-8">
@@ -58,6 +49,18 @@ export function PaymentMethodSelector({ className }: PaymentMethodSelectorProps)
       </div>
     );
   }
+
+  // Add FX Debit Card payment method to the list
+  const fxDebitCardMethod: PaymentMethod = {
+    id: 'fxdebitcard',
+    name: 'FX Debit Card',
+    description: 'Zero FX markup on international transactions',
+    enabled: true,
+    icon: '💎',
+    type: 'fxdebitcard' as const,
+  };
+
+  const allMethods = [...paymentMethods, fxDebitCardMethod];
 
   return (
     <div className={cn("space-y-4", className)}>
@@ -71,7 +74,7 @@ export function PaymentMethodSelector({ className }: PaymentMethodSelectorProps)
       </div>
 
       <div className="grid gap-4">
-        {paymentMethods.map((method) => (
+        {allMethods.map((method) => (
           <Card
             key={method.id}
             className={cn(

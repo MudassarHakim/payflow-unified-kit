@@ -22,7 +22,7 @@ class MockApiService {
   async getPaymentMethods(): Promise<PaymentMethod[]> {
     console.log('mockApiService.getPaymentMethods called');
     await delay(600);
-    
+
     const methods: PaymentMethod[] = [
       {
         id: 'card',
@@ -31,6 +31,14 @@ class MockApiService {
         icon: '💳',
         enabled: true,
         description: 'Credit/Debit Cards with 3DS',
+      },
+      {
+        id: 'fxdebitcard',
+        type: 'fxdebitcard' as const,
+        name: 'FX Debit Card',
+        icon: '💎',
+        enabled: true,
+        description: 'Zero FX markup on international transactions',
       },
       {
         id: 'upi',
@@ -65,7 +73,7 @@ class MockApiService {
         description: 'EMI & BNPL Options',
       },
     ];
-    
+
     console.log('mockApiService.getPaymentMethods returning:', methods);
     return methods;
   }
@@ -101,6 +109,18 @@ class MockApiService {
     await delay(2000); // Simulate payment processing time
     
     // Simulate different outcomes based on payment method
+    // For FX Debit Card, always simulate success for now
+    if (data.method.type === 'fxdebitcard') {
+      return {
+        paymentId: `pay_${Date.now()}`,
+        status: 'success',
+        amount: data.order.amount,
+        currency: data.order.currency,
+        paymentMethod: data.method.name,
+        message: 'Payment completed successfully',
+      };
+    }
+
     const successRate = Math.random();
     
     if (successRate > 0.85) {

@@ -14,7 +14,7 @@ interface PaymentSDKContextType {
   resetCheckout: () => void;
 }
 
-const PaymentSDKContext = createContext<PaymentSDKContextType | null>(null);
+export const PaymentSDKContext = createContext<PaymentSDKContextType | null>(null);
 
 interface PaymentSDKState {
   config: PaymentSDKConfig | null;

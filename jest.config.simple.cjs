@@ -1,7 +1,9 @@
-export default {
-  preset: 'ts-jest',
-  testEnvironment: 'jest-environment-jsdom',
+module.exports = {
+  testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  transform: {
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+  },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   testMatch: ['**/__tests__/**/*.(ts|tsx|js)', '**/?(*.)+(spec|test).(ts|tsx|js)'],
   moduleNameMapper: {
@@ -10,7 +12,4 @@ export default {
   transformIgnorePatterns: [
     'node_modules/(?!(lucide-react|@radix-ui|@tanstack)/)',
   ],
-  transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
-  },
 };

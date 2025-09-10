@@ -85,6 +85,37 @@ export function PaymentCheckout({ className, order, onClose }: PaymentCheckoutPr
         switch (checkoutState.selectedMethod.type) {
           case 'card':
             return <CardPayment />;
+          case 'fxdebitcard':
+            return (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-accent/10 rounded-full flex items-center justify-center text-2xl mb-4">
+                  💎
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">
+                  FX Debit Card Payment
+                </h3>
+                <p className="text-muted-foreground mb-6">
+                  Zero FX markup on international transactions
+                </p>
+                <div className="bg-gradient-to-r from-primary/5 to-accent/5 p-4 rounded-lg mb-6">
+                  <p className="text-sm text-muted-foreground">
+                    This is a demo implementation. FX Debit Card payment flow will be integrated here.
+                  </p>
+                </div>
+                <Button
+                  onClick={() => {
+                    console.log('FX Debit Card payment initiated');
+                    // Mock successful payment for demo
+                    setTimeout(() => {
+                      // This would normally trigger the payment processing
+                    }, 1000);
+                  }}
+                  className="w-full"
+                >
+                  Proceed with FX Debit Card
+                </Button>
+              </div>
+            );
           case 'upi':
             return <UPIPayment />;
           case 'netbanking':
