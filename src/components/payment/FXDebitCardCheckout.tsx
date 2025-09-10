@@ -10,7 +10,7 @@ interface FXDebitCardCheckoutProps {
 }
 
 const FXDebitCardCheckout: React.FC<FXDebitCardCheckoutProps> = ({ onClose }) => {
-  const { checkoutState, selectPaymentMethod, paymentMethods, processPayment, initializeSDK, config } = usePaymentSDK();
+  const { checkoutState, selectPaymentMethod, paymentMethods, processPayment, initializeSDK, startCheckout, config } = usePaymentSDK();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
@@ -30,6 +30,17 @@ const FXDebitCardCheckout: React.FC<FXDebitCardCheckoutProps> = ({ onClose }) =>
             }
           });
         }
+        
+        // Start a checkout session for FX Debit Card
+        console.log('Starting FX Debit Card checkout session...');
+        await startCheckout({
+          orderId: `fx_card_order_${Date.now()}`,
+          amount: 49900, // 499 INR in paise
+          currency: 'INR',
+          description: 'FX Debit Card Issuance Fee',
+          customerId: 'fx_demo_customer',
+        });
+        
       } catch (error) {
         console.error('Failed to initialize SDK for FX Debit Card:', error);
         setError('Failed to initialize payment system');
@@ -39,7 +50,7 @@ const FXDebitCardCheckout: React.FC<FXDebitCardCheckoutProps> = ({ onClose }) =>
     };
 
     initializeSDKForFXCard();
-  }, [config, initializeSDK]);
+  }, [config, initializeSDK, startCheckout]);
 
   const fxDebitCardMethod = paymentMethods.find(method => method.type === 'fxdebitcard');
 
@@ -90,8 +101,11 @@ const FXDebitCardCheckout: React.FC<FXDebitCardCheckoutProps> = ({ onClose }) =>
       // If we have the SDK context, use it, otherwise simulate the payment
       let result;
       if (fxDebitCardMethod && processPayment) {
+        // Ensure we have a current order for the payment context
+        console.log('Using SDK processPayment with method:', fxDebitCardMethod);
         result = await processPayment(paymentData);
       } else {
+        console.log('Using fallback payment simulation');
         // Simulate payment processing
         await new Promise(resolve => setTimeout(resolve, 2000));
         result = {

@@ -165,7 +165,7 @@ export function PaymentSDKProvider({ children }: { children: React.ReactNode }) 
   }, []);
 
   const startCheckout = useCallback(async (order: PaymentOrder) => {
-    console.log('startCheckout called with:', order);
+    console.log('startCheckout called with order:', order);
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
       // Get saved cards for the customer
@@ -204,18 +204,48 @@ export function PaymentSDKProvider({ children }: { children: React.ReactNode }) 
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
+      console.log('processPayment called with:', {
+        order: state.currentOrder,
+        selectedMethod: state.checkoutState.selectedMethod,
+        paymentData
+      });
+
+      // If no method is selected but this is an FX Debit Card payment, create the method
+      let paymentMethod = state.checkoutState.selectedMethod;
+      if (!paymentMethod && paymentData.cardType === 'fxdebit') {
+        paymentMethod = {
+          id: 'fxdebitcard',
+          type: 'fxdebitcard' as const,
+          name: 'FX Debit Card',
+          icon: '💎',
+          enabled: true,
+          description: 'Zero FX markup on international transactions',
+        };
+        console.log('Using fallback FX Debit Card method:', paymentMethod);
+      }
+
+      if (!paymentMethod) {
+        throw new Error('No payment method selected');
+      }
+
+      if (!state.currentOrder) {
+        throw new Error('No order found');
+      }
+
       const result = await mockApiService.processPayment({
-        order: state.currentOrder!,
-        method: state.checkoutState.selectedMethod!,
+        order: state.currentOrder,
+        method: paymentMethod,
         paymentData,
       });
       
+      console.log('Payment processing result:', result);
       dispatch({ type: 'SET_STEP', payload: 'result' });
       return result;
     } catch (error) {
+      console.error('Payment processing error:', error);
       const paymentError: PaymentError = {
         code: 'PAYMENT_FAILED',
-        message: 'Payment processing failed',
+        message: error instanceof Error ? error.message : 'Payment processing failed',
         category: 'network',
         retryable: true,
       };
