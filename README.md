@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Welcome to your Payflow-unified-kit project
 
 ## Project info
 
