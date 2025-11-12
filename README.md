@@ -2,19 +2,9 @@
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/15a95e4b-e604-4638-9fa1-440e7a7ad482
+**URL**: https://payflow-unified-kit-mudassar-hakim.netlify.app/
 
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Live Project Link**
-
-Simply visit the [Live Project]((https://payflow-unified-kit-mudassar-hakim.netlify.app/)) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
+**Edit using your preferred IDE**
 
 If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
