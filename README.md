@@ -8,9 +8,9 @@
 
 There are several ways of editing your application.
 
-**Use Lovable**
+**Live Project Link**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/15a95e4b-e604-4638-9fa1-440e7a7ad482) and start prompting.
+Simply visit the [Live Project]((https://payflow-unified-kit-mudassar-hakim.netlify.app/)) and start prompting.
 
 Changes made via Lovable will be committed automatically to this repo.
 
